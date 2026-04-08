@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">TripSathi</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_landing">LandingActivity</string>
+    <string name="title_activity_onboarding">OnboardingActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_user_info">UserInfoActivity</string>
+    <string name="title_activity_verified">VerifiedActivity</string>
+    <string name="title_activity_qractivity">QRActivity</string>
+    <string name="title_activity_developer">DeveloperActivity</string>
+    <string name="title_activity_qrscanner">QRScannerActivity</string>
+    <string name="title_activity_qrresult">QRResultActivity</string>
+    <string name="title_activity_safety">SafetyActivity</string>
+    <string name="title_activity_contacts">ContactsActivity</string>
+</resources>

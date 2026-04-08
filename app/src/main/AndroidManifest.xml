@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TripSathi">
+        <activity
+            android:name=".ContactsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_contacts"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".SafetyActivity"
+            android:exported="false"
+            android:label="@string/title_activity_safety"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".QRResultActivity"
+            android:exported="false"
+            android:label="@string/title_activity_qrresult"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".QRScannerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_qrscanner"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".DeveloperActivity"
+            android:exported="false"
+            android:label="@string/title_activity_developer"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".QRActivity"
+            android:exported="false"
+            android:label="@string/title_activity_qractivity"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".VerifiedActivity"
+            android:exported="false"
+            android:label="@string/title_activity_verified"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".UserInfoActivity"
+            android:exported="false"
+            android:label="@string/title_activity_user_info"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:label="@string/title_activity_profile"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".DashboardActivity"
+            android:exported="false"
+            android:label="@string/title_activity_dashboard"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false"
+            android:label="@string/title_activity_register"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".OnboardingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_onboarding"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".LandingActivity"
+            android:exported="false"
+            android:label="@string/title_activity_landing"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:label="@string/title_activity_splash"
+            android:theme="@style/Theme.TripSathi">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.TripSathi" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAMame-TxA515al8B13RGnjJH1o4eVsmMs" />
+    </application>
+
+</manifest>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "419550298572",
+    "project_id": "tripsathi-3a7bb",
+    "storage_bucket": "tripsathi-3a7bb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:419550298572:android:a885606b6457ce33941d69",
+        "android_client_info": {
+          "package_name": "com.example.tripsathi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLWBxHG9w74iXhGuJn4HfVYpOAiSOQnvw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
