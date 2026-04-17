@@ -1,62 +1,67 @@
 package com.example.tripsathi
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
-class SplashActivity : ComponentActivity() {
-
+class SplashActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             SplashScreen {
-                checkUserAndNavigate()
+                val prefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+                val isFirstBoot = prefs.getBoolean("isFirstBoot", true)
+                val user = FirebaseAuth.getInstance().currentUser
+
+                if (isFirstBoot) {
+                    startActivity(Intent(this, LanguageActivity::class.java))
+                } else if (user != null) {
+                    startActivity(Intent(this, DashboardActivity::class.java))
+                } else {
+                    startActivity(Intent(this, LandingActivity::class.java))
+                }
+                finish()
             }
         }
-    }
-
-    private fun checkUserAndNavigate() {
-        val auth = FirebaseAuth.getInstance()
-
-        if (auth.currentUser != null) {
-            // ✅ User already logged in → go to Dashboard
-            startActivity(Intent(this, DashboardActivity::class.java))
-        } else {
-            // ❌ Not logged in → go to Onboarding
-            startActivity(Intent(this, OnboardingActivity::class.java))
-        }
-
-        finish()
     }
 }
 
 @Composable
 fun SplashScreen(onTimeout: () -> Unit) {
-
-    LaunchedEffect(true) {
-        delay(2000) // splash delay
+    LaunchedEffect(Unit) {
+        delay(2000)
         onTimeout()
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "TripSathi",
-            fontSize = 32.sp
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            // Placeholder icon using standard android resource
+            Image(
+                painter = painterResource(id = R.drawable.tripsathilogo),
+                contentDescription = null,
+                modifier = Modifier.size(300.dp)
+            )
+        }
     }
 }

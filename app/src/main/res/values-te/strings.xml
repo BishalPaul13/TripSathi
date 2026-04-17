@@ -1,0 +1,132 @@
+<resources>
+    <string name="app_name">ట్రిప్‌సాథి (TripSathi)</string>
+
+    <!-- General -->
+    <string name="hello_user">నమస్కారం, %1$s</string>
+    <string name="search_hint">వెతకండి</string>
+    <string name="logout">లాగ్ అవుట్</string>
+    <string name="cancel">రద్దు చేయండి</string>
+    <string name="logout_confirm_msg">మీరు ఖచ్చితంగా లాగ్ అవుట్ చేయాలనుకుంటున్నారా?</string>
+    <string name="no_items_found">ఏమీ కనుగొనబడలేదు</string>
+    <string name="skip">దాటవేయి</string>
+    <string name="get_started">ప్రారంభించండి</string>
+    <string name="continue_text">కొనసాగించు</string>
+    <string name="edit">సవరించు</string>
+
+    <!-- Language -->
+    <string name="choose_language">మీ భాషను ఎంచుకోండి</string>
+    <string name="choose_language_hi">మీ భాషను ఎంచుకోండి</string>
+    <string name="select_language">భాషను ఎంచుకోండి</string>
+    <string name="english">English (ఇంగ్లీష్)</string>
+    <string name="hindi">Hindi (హిందీ)</string>
+    <string name="telugu">Telugu (తెలుగు)</string>
+
+    <!-- Onboarding -->
+    <string name="onboard_title_1">మీ స్మార్ట్ ప్రయాణ\nరక్షణ తోడు</string>
+    <string name="onboard_desc_1">ప్రతి ప్రయాణానికి AI-ఆధారిత రక్షణ — ప్రతి ప్రయాణికుడి కోసం నిర్మించిన ప్రమాద గుర్తింపు, అత్యవసర హెచ్చరికలు మరియు లైవ్ ట్రాకింగ్.</string>
+    <string name="onboard_tag_1">AI-ఆధారిత</string>
+
+    <string name="onboard_title_2">మీరు ఎక్కడ ఉన్నారో\nఎల్లప్పుడూ తెలుసుకోండి</string>
+    <string name="onboard_desc_2">తెలియని ప్రదేశాల కోసం తెలివైన జియో-ఫెన్స్ డిటెక్షన్‌తో Google మ్యాప్స్‌లో మీ స్థానం నిజ సమయంలో అప్‌డేట్ అవుతుంది.</string>
+    <string name="onboard_tag_2">లైవ్ GPS</string>
+
+    <string name="onboard_title_3">ఒక్క ట్యాప్ చేస్తే\nవెంటనే సహాయం అందుతుంది</string>
+    <string name="onboard_desc_3">ఫోన్ అన్‌లాక్ చేయకుండానే అలారం, వైబ్రేషన్‌ని ట్రిగ్గర్ చేస్తుంది, SMS ద్వారా మీ లైవ్ లొకేషన్‌ను పంపుతుంది మరియు అత్యవసర కాంటాక్ట్‌లను డయల్ చేస్తుంది.</string>
+    <string name="onboard_tag_3">SOS సిస్టమ్</string>
+
+    <!-- Landing -->
+    <string name="landing_title">ట్రిప్‌సాథి</string>
+    <string name="landing_tagline">తెలివిగా ప్రయాణించండి. సురక్షితంగా ఉండండి.</string>
+    <string name="welcome_msg">మీకు సాదర స్వాగతం 👋</string>
+    <string name="continue_btn">కొనసాగించు →</string>
+    <string name="already_have_account_login">ఇప్పటికే ఖాతా ఉందా? లాగిన్ అవ్వండి</string>
+    <string name="feature_1_title">రియల్-టైమ్ GPS ట్రాకింగ్</string>
+    <string name="feature_1_desc">Google మ్యాప్స్‌లో లైవ్ లొకేషన్, ఎల్లప్పుడూ అప్‌డేట్ చేయబడుతుంది.</string>
+    <string name="feature_2_title">వన్‌-ట్యాప్ SOS అత్యవసరం</string>
+    <string name="feature_2_desc">అలారం + లొకేషన్‌తో SMS + ఎమర్జెన్సీ డయలర్.</string>
+    <string name="feature_3_title">జియో-ఫెన్స్ రక్షణ</string>
+    <string name="feature_3_desc">అధిక ప్రమాదం ఉన్న ప్రాంతాల్లోకి ప్రవేశించినప్పుడు ఆటో-అలర్ట్‌లు.</string>
+
+    <!-- Login -->
+    <string name="welcome_back">తిరిగి స్వాగతం</string>
+    <string name="sign_in_desc">మీ ప్రయాణాన్ని కొనసాగించడానికి సైన్ ఇన్ చేయండి</string>
+    <string name="email_label">ఈమెయిల్</string>
+    <string name="email_placeholder">మీ ఈమెయిల్‌ను నమోదు చేయండి</string>
+    <string name="password_label">పాస్‌వర్డ్</string>
+    <string name="password_placeholder">మీ పాస్‌వర్డ్‌ను నమోదు చేయండి</string>
+    <string name="sign_in_btn">సైన్ ఇన్</string>
+    <string name="continue_with_google">గూగుల్‌తో కొనసాగించండి</string>
+    <string name="dont_have_account">ఖాతా లేదా? </string>
+    <string name="sign_up">సైన్ అప్</string>
+
+    <!-- Register -->
+    <string name="create_account">ఖాతాను సృష్టించండి</string>
+    <string name="join_tripsathi_desc">ట్రిప్‌సాథిలో చేరండి — తెలివిగా ప్రయాణించండి, సురక్షితంగా ఉండండి</string>
+    <string name="your_details">మీ వివరాలు</string>
+    <string name="full_name_label">పూర్తి పేరు</string>
+    <string name="full_name_placeholder">ఉదా. రాహుల్ శర్మ</string>
+    <string name="email_address_label">ఈమెయిల్ చిరునామా</string>
+    <string name="email_address_placeholder">ఉదా. rahul@gmail.com</string>
+    <string name="password_req_placeholder">కనిష్టంగా 8 అక్షరాలు, పెద్ద అక్షరం, సంఖ్య, గుర్తు</string>
+    <string name="confirm_password_label">పాస్‌వర్డ్‌ను ధృవీకరించండి</string>
+    <string name="confirm_password_placeholder">మీ పాస్‌వర్డ్‌ను మళ్లీ నమోదు చేయండి</string>
+    <string name="passwords_do_not_match">పాస్‌వర్డ్‌లు సరిపోలడం లేదు</string>
+    <string name="or_register_with_email">  లేదా ఈమెయిల్‌తో నమోదు చేసుకోండి  </string>
+    <string name="create_my_account_btn">నా ఖాతాను సృష్టించు →</string>
+    <string name="already_have_account">ఇప్పటికే ఖాతా ఉందా? </string>
+    <string name="weak">బలహీనంగా ఉంది</string>
+    <string name="fair">పర్వాలేదు</string>
+    <string name="good">బాగుంది</string>
+    <string name="strong">బలంగా ఉంది ✓</string>
+
+    <!-- Dashboard -->
+    <string name="safety_identity">భద్రతా గుర్తింపు</string>
+    <string name="active">క్రియాశీలంగా ఉంది</string>
+    <string name="safety_id_active_desc">మీ డిజిటల్ సేఫ్టీ ఐడి క్రియాశీలంగా ఉంది</string>
+    <string name="view_details">వివరాలను చూడండి</string>
+    <string name="recent_activity">ఇటీవలి కార్యకలాపం</string>
+    <string name="my_documents">నా పత్రాలు</string>
+    <string name="services">సేవలు</string>
+    <string name="categories">వర్గాలు</string>
+
+    <!-- Grid Items -->
+    <string name="identity">గుర్తింపు</string>
+    <string name="safety">భద్రత</string>
+    <string name="health">ఆరోగ్యం</string>
+    <string name="alerts">హెచ్చరికలు</string>
+    <string name="travel">ప్రయాణం</string>
+    <string name="transport">రవాణా</string>
+
+    <!-- Navigation -->
+    <string name="home">హోమ్</string>
+    <string name="map">మ్యాప్</string>
+    <string name="qr">క్యూఆర్</string>
+
+    <!-- Profile -->
+    <string name="profile">ప్రొఫైల్</string>
+    <string name="your_info_card">మీ సమాచార కార్డ్</string>
+    <string name="explore_section">ఈ విభాగాన్ని అన్వేషించండి</string>
+    <string name="help_center">సహాయ కేంద్రం</string>
+    <string name="settings">సెట్టింగులు</string>
+    <string name="language">భాష (Language)</string>
+    <string name="about_developer">డెవలపర్ గురించి</string>
+    <string name="learn_about_creator">ట్రిప్‌సాథి సృష్టికర్త గురించి తెలుసుకోండి</string>
+    <string name="check_it_out">దీన్ని చూడండి</string>
+
+    <!-- User Info -->
+    <string name="review_your_info">మీ సమాచారాన్ని సమీక్షించండి</string>
+    <string name="personal">వ్యక్తిగత</string>
+    <string name="contact">కాంటాక్ట్</string>
+    <string name="emergency_contact">అత్యవసర కాంటాక్ట్</string>
+    <string name="safety_details">భద్రతా వివరాలు</string>
+    <string name="blood_group">రక్త గ్రూపు</string>
+    <string name="home_address">ఇంటి చిరునామా</string>
+    <string name="organ_donor">అవయవ దాత (అవును/కాదు)</string>
+    <string name="confirm_info_correct">పైన పేర్కొన్న సమాచారం సరైనదని నేను ధృవీకరిస్తున్నాను</string>
+    <string name="back_to_home">హోమ్‌కి తిరిగి వెళ్లు</string>
+
+    <!-- SOS -->
+    <string name="sos_btn">🚨 SOS</string>
+    <string name="danger_zone">⚠️ ప్రమాదకర ప్రాంతం!</string>
+    <string name="permission_required">అనుమతి అవసరం</string>
+</resources>

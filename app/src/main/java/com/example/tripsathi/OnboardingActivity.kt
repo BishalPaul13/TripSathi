@@ -2,17 +2,19 @@ package com.example.tripsathi
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,30 +23,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.Shield
+import androidx.compose.foundation.Image
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
-// ── Palette ──────────────────────────────────────────────────────────────────
-private val OrangePrimary  = Color(0xFFFF8C42)
-private val OrangeDark     = Color(0xFFFF6B00)
-private val OrangeDeep     = Color(0xFFE84F00)
-private val OrangeLight    = Color(0xFFFFB347)
-private val OrangeTint     = Color(0xFFFFF0E5)
-private val CreamBg        = Color(0xFFFDF6EE)   // warm cream background
-private val CardWhite      = Color(0xFFFFFFFF)
-private val TextDark       = Color(0xFF1A1A1A)
-private val TextMuted      = Color(0xFF888888)
+// ── Palette ───────────────────────────────────────────────────────────────────
+private val OrangePrimary = Color(0xFFFF8C42)
+private val OrangeDark    = Color(0xFFFF6B00)
+private val OrangeDeep    = Color(0xFFE84F00)
+private val OrangeLight   = Color(0xFFFFB347)
+private val OrangeTint    = Color(0xFFFFF0E5)
+private val CreamBg       = Color(0xFFFAFAFA)
+private val CardWhite     = Color(0xFFFFFFFF)
+private val TextDark      = Color(0xFF0D0D0D)
+private val TextMuted     = Color(0xFF9A9A9A)
+private val StrokeLine    = Color(0xFFEEEEEE)
 
-class OnboardingActivity : ComponentActivity() {
+class OnboardingActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -57,13 +57,11 @@ class OnboardingActivity : ComponentActivity() {
 }
 
 data class OnboardPage(
-    val title: String,
-    val desc: String,
+    val titleRes: Int,
+    val descRes: Int,
     val icon: ImageVector,
-    val heroImage: Int,          // drawable res id — put your illustration here
-    val cardLabel: String,
-    val cardTitle: String,
-    val cardDesc: String
+    val heroImage: Int,
+    val tagRes: Int
 )
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -75,296 +73,332 @@ fun PremiumOnboarding(onFinish: () -> Unit) {
 
     val pages = listOf(
         OnboardPage(
-            title = "Welcome to TripSathi",
-            desc = "Your smart AI-powered travel safety companion for every journey.",
+            titleRes = R.string.onboard_title_1,
+            descRes = R.string.onboard_desc_1,
             icon = Icons.Default.Shield,
-            heroImage = R.drawable.hero_travel,   // 🖼 add hero_travel.png to drawable
-            cardLabel = "AI-POWERED",
-            cardTitle = "Real Protection, Everywhere",
-            cardDesc = "Risk detection, emergency alerts, and live tracking built for every traveler."
+            heroImage = R.drawable.hero_travel,
+            tagRes = R.string.onboard_tag_1
         ),
         OnboardPage(
-            title = "Live GPS Tracking",
-            desc = "Always know where you are — even in unfamiliar places.",
+            titleRes = R.string.onboard_title_2,
+            descRes = R.string.onboard_desc_2,
             icon = Icons.Default.LocationOn,
-            heroImage = R.drawable.hero_map,       // 🖼 add hero_map.png to drawable
-            cardLabel = "FEATURE",
-            cardTitle = "Interactive Live Map",
-            cardDesc = "Your position updates in real-time on Google Maps with geo-fence detection."
+            heroImage = R.drawable.hero_map,
+            tagRes = R.string.onboard_tag_2
         ),
         OnboardPage(
-            title = "SOS Protection",
-            desc = "One tap is all it takes to get help instantly.",
+            titleRes = R.string.onboard_title_3,
+            descRes = R.string.onboard_desc_3,
             icon = Icons.Default.Warning,
-            heroImage = R.drawable.hero_sos,       // 🖼 add hero_sos.png to drawable
-            cardLabel = "EMERGENCY",
-            cardTitle = "One-Tap SOS System",
-            cardDesc = "Triggers alarm, vibration, sends your live location via SMS, and dials emergency contacts."
+            heroImage = R.drawable.hero_sos,
+            tagRes = R.string.onboard_tag_3
         )
     )
 
-    val heroGradient = Brush.linearGradient(
-        colorStops = arrayOf(
-            0.0f to OrangePrimary,
-            1.0f to OrangeDeep
-        )
-    )
-
-    // Cream background for entire screen
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(CreamBg)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize()
         ) {
 
+            // ── Top bar: back arrow + Skip ────────────────────────────────────
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Back arrow (hidden on first page)
+                AnimatedVisibility(
+                    visible = pagerState.currentPage > 0,
+                    enter = fadeIn(tween(200)),
+                    exit = fadeOut(tween(200))
+                ) {
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        },
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(StrokeLine)
+                    ) {
+                        Text(
+                            text = "←",
+                            fontSize = 18.sp,
+                            color = TextDark,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                if (pagerState.currentPage == 0) {
+                    Spacer(modifier = Modifier.size(40.dp))
+                }
+
+                TextButton(onClick = onFinish) {
+                    Text(
+                        text = stringResource(id = R.string.skip),
+                        color = TextMuted,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+            }
+
+            // ── Pager ─────────────────────────────────────────────────────────
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.weight(1f)
             ) { page ->
 
-                AnimatedContent(
-                    targetState = page,
-                    transitionSpec = {
-                        fadeIn(tween(500)) togetherWith fadeOut(tween(300))
-                    },
-                    label = "PageContent"
-                ) { targetPage ->
+                val currentData = pages[page]
 
-                    val currentData = pages[targetPage]
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 28.dp),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
 
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    // ── Illustration area ─────────────────────────────────────
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center
                     ) {
-
-                        // ── Hero section (orange gradient top half) ─────────
+                        // Soft orange blob behind illustration
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .background(heroGradient)
-                                .padding(top = 20.dp, bottom = 32.dp),
-                            contentAlignment = Alignment.TopCenter
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                // Logo row
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier
-                                            .size(32.dp)
-                                            .clip(CircleShape)
-                                            .background(CardWhite)
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Shield,
-                                            contentDescription = null,
-                                            tint = OrangeDark,
-                                            modifier = Modifier.size(18.dp)
+                                .size(220.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.radialGradient(
+                                        colors = listOf(
+                                            OrangeTint,
+                                            CreamBg
                                         )
-                                    }
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Text(
-                                        text = "TripSathi",
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = CardWhite
                                     )
-                                }
-
-                                Spacer(modifier = Modifier.height(20.dp))
-
-                                // Hero illustration
-                                Image(
-                                    painter = painterResource(id = currentData.heroImage),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Fit,
-                                    modifier = Modifier
-                                        .size(160.dp)
-                                        .clip(CircleShape)
                                 )
-                            }
-                        }
+                        )
 
-                        // ── Wave divider ─────────────────────────────────────
-                        WaveDivider()
-
-                        // ── Content on cream background ──────────────────────
+                        // Tag pill floating above
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-
-                            Text(
-                                text = currentData.title,
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = TextDark,
-                                textAlign = TextAlign.Center
-                            )
-
-                            Spacer(modifier = Modifier.height(6.dp))
-
-                            Text(
-                                text = currentData.desc,
-                                fontSize = 13.sp,
-                                color = TextMuted,
-                                textAlign = TextAlign.Center,
-                                lineHeight = 20.sp
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(50.dp))
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            colors = listOf(OrangePrimary, OrangeLight)
+                                        )
+                                    )
+                                    .padding(horizontal = 14.dp, vertical = 6.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = currentData.icon,
+                                        contentDescription = null,
+                                        tint = CardWhite,
+                                        modifier = Modifier.size(11.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(id = currentData.tagRes),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = CardWhite,
+                                        letterSpacing = 1.sp
+                                    )
+                                }
+                            }
 
                             Spacer(modifier = Modifier.height(20.dp))
 
-                            // ── Premium info card ────────────────────────────
-                            OnboardInfoCard(
-                                label = currentData.cardLabel,
-                                title = currentData.cardTitle,
-                                description = currentData.cardDesc
+                            // Hero image
+                            Image(
+                                painter = painterResource(id = currentData.heroImage),
+                                contentDescription = null,
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.size(200.dp)
                             )
+                        }
+                    }
+
+                    // ── Text block at bottom ──────────────────────────────────
+                    Column(
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        // Page number indicator
+                        Text(
+                            text = "0${page + 1} / 03",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = OrangeDark,
+                            letterSpacing = 2.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text(
+                            text = stringResource(id = currentData.titleRes),
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = TextDark,
+                            lineHeight = 36.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = stringResource(id = currentData.descRes),
+                            fontSize = 14.sp,
+                            color = TextMuted,
+                            lineHeight = 22.sp
+                        )
+
+                        Spacer(modifier = Modifier.height(28.dp))
+
+                        // ── Dots + CTA row ────────────────────────────────────
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Dot indicators
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                repeat(pages.size) { index ->
+                                    val isActive = pagerState.currentPage == index
+                                    val width by animateDpAsState(
+                                        targetValue = if (isActive) 24.dp else 7.dp,
+                                        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+                                        label = "dot_width"
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .height(7.dp)
+                                            .width(width)
+                                            .clip(RoundedCornerShape(50))
+                                            .background(
+                                                if (isActive) OrangeDark else Color(0xFFDDDDDD)
+                                            )
+                                    )
+                                }
+                            }
+
+                            // Arrow CTA button
+                            val isLast = pagerState.currentPage == pages.size - 1
+
+                            if (isLast) {
+                                // "Get Started" wide pill button
+                                Button(
+                                    onClick = onFinish,
+                                    shape = RoundedCornerShape(50),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = OrangeDark
+                                    ),
+                                    elevation = ButtonDefaults.buttonElevation(
+                                        defaultElevation = 10.dp
+                                    ),
+                                    contentPadding = PaddingValues(
+                                        horizontal = 28.dp,
+                                        vertical = 16.dp
+                                    )
+                                ) {
+                                    Text(
+                                        text = stringResource(id = R.string.get_started),
+                                        color = CardWhite,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        fontSize = 14.sp,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                }
+                            } else {
+                                // Arrow circle button
+                                Box(
+                                    modifier = Modifier
+                                        .size(58.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            Brush.linearGradient(
+                                                colors = listOf(OrangePrimary, OrangeDeep)
+                                            )
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    IconButton(
+                                        onClick = {
+                                            scope.launch {
+                                                pagerState.animateScrollToPage(
+                                                    pagerState.currentPage + 1
+                                                )
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxSize()
+                                    ) {
+                                        Text(
+                                            text = "→",
+                                            fontSize = 22.sp,
+                                            color = CardWhite,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            // ── Dots ─────────────────────────────────────────────────────────
-            Row(
-                modifier = Modifier.padding(vertical = 10.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                repeat(pages.size) { index ->
-                    val isActive = pagerState.currentPage == index
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .height(6.dp)
-                            .width(if (isActive) 22.dp else 6.dp)
-                            .clip(RoundedCornerShape(50))
-                            .background(if (isActive) OrangeDark else Color(0xFFDDDDDD))
-                    )
-                }
-            }
-
-            // ── Navigation buttons ────────────────────────────────────────────
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 14.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextButton(onClick = onFinish) {
-                    Text("Skip", color = TextMuted, fontSize = 14.sp)
-                }
-
-                Button(
-                    onClick = {
-                        if (pagerState.currentPage < pages.size - 1) {
-                            scope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            }
-                        } else {
-                            onFinish()
-                        }
-                    },
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(containerColor = OrangeDark),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
-                    contentPadding = PaddingValues(horizontal = 32.dp, vertical = 14.dp)
-                ) {
-                    Text(
-                        text = if (pagerState.currentPage == pages.size - 1) "Get Started" else "Next  →",
-                        color = CardWhite,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 14.sp
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(20.dp))
         }
-    }
-}
 
-// ── Curved wave divider between hero and cream content ───────────────────────
-@Composable
-private fun WaveDivider() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(24.dp)
-            .background(
-                color = CreamBg,
-                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-            )
-    )
-}
-
-// ── White info card with orange top accent ────────────────────────────────────
-@Composable
-private fun OnboardInfoCard(label: String, title: String, description: String) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = CardWhite),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-
+        // ── TripSathi logo top-center watermark ───────────────────────────────
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
+                    .size(26.dp)
+                    .clip(CircleShape)
                     .background(
-                        Brush.horizontalGradient(
-                            colors = listOf(OrangePrimary, OrangeLight)
+                        Brush.linearGradient(
+                            colors = listOf(OrangePrimary, OrangeDeep)
                         )
                     )
-            )
-
-            Column(modifier = Modifier.padding(18.dp)) {
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(OrangeTint)
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = label,
-                        fontSize = 9.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = OrangeDark,
-                        letterSpacing = 0.8.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(
-                    text = title,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextDark
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = description,
-                    fontSize = 13.sp,
-                    color = TextMuted,
-                    lineHeight = 20.sp
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Shield,
+                    contentDescription = null,
+                    tint = CardWhite,
+                    modifier = Modifier.size(14.dp)
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "TripSathi",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = TextDark
+            )
         }
     }
 }

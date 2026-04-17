@@ -10,11 +10,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
-import android.os.VibrationEffect
 import android.os.Vibrator
 import android.telephony.SmsManager
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.example.tripsathi.ui.theme.TripSathiTheme
 import com.google.android.gms.location.*
@@ -34,10 +31,11 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlin.math.*
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,6 +58,10 @@ fun LocationPermissionWrapper() {
             ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.SEND_SMS
             ) == PackageManager.PERMISSION_GRANTED
         )
     }
@@ -67,7 +69,8 @@ fun LocationPermissionWrapper() {
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        hasPermission = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
+        hasPermission = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+                        permissions[Manifest.permission.SEND_SMS] == true
     }
 
     LaunchedEffect(Unit) {
@@ -86,7 +89,7 @@ fun LocationPermissionWrapper() {
         LocationScreen(fusedLocationClient)
     } else {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Permission required")
+            Text("Location and SMS Permissions required")
         }
     }
 }
@@ -187,10 +190,13 @@ fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): D
 
 // 🚨 SOS FUNCTION
 fun sendSOS(context: Context, location: LatLng) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val db = FirebaseDatabase.getInstance().getReference("users")
 
-    // 🔥 Firebase
+    // 🔥 Firebase Alert Log
     FirebaseDatabase.getInstance().getReference("alerts").push().setValue(
         mapOf(
+            "userId" to user?.uid,
             "lat" to location.latitude,
             "lng" to location.longitude,
             "time" to System.currentTimeMillis()
@@ -198,18 +204,53 @@ fun sendSOS(context: Context, location: LatLng) {
     )
 
     // 🔊 Alarm
-    MediaPlayer.create(context, R.raw.alarm_sound).start()
+    try {
+        MediaPlayer.create(context, R.raw.alarm_sound).start()
+    } catch (e: Exception) {
+        // sound file might be missing
+    }
 
     // 📳 Vibration
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     vibrator.vibrate(3000)
 
+    // Fetch user's emergency contact from database
+    if (user != null) {
+        db.child(user.uid).child("contact").get().addOnSuccessListener { snapshot ->
+            val emergencyNumber = snapshot.value?.toString() ?: ""
+            if (emergencyNumber.isNotBlank()) {
+                performEmergencyActions(context, location, emergencyNumber)
+            } else {
+                Toast.makeText(context, "Emergency number not set in profile!", Toast.LENGTH_LONG).show()
+            }
+        }.addOnFailureListener {
+            Toast.makeText(context, "Failed to fetch emergency contact", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Toast.makeText(context, "User not logged in!", Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun performEmergencyActions(context: Context, location: LatLng, emergencyNumber: String) {
     // 📩 SMS
     try {
-        val msg = "🚨 I am in danger!\nhttps://maps.google.com/?q=${location.latitude},${location.longitude}"
-        SmsManager.getDefault().sendTextMessage("7876848381", null, msg, null, null)
+        val msg = "🚨 I am in danger! My live location: https://maps.google.com/?q=${location.latitude},${location.longitude}"
+        
+        // Use a more robust way to get SmsManager
+        val smsManager: SmsManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.getSystemService(SmsManager::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            SmsManager.getDefault()
+        }
+
+        // Use sendMultipartTextMessage because the emoji and URL might exceed character limits for a single SMS
+        val parts = smsManager.divideMessage(msg)
+        smsManager.sendMultipartTextMessage(emergencyNumber, null, parts, null, null)
+
+        Toast.makeText(context, "Emergency SMS sent to $emergencyNumber", Toast.LENGTH_SHORT).show()
     } catch (e: Exception) {
-        Toast.makeText(context, "SMS failed", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "SMS failed: ${e.message}", Toast.LENGTH_SHORT).show()
     }
 
     // 📞 Call
@@ -217,5 +258,5 @@ fun sendSOS(context: Context, location: LatLng) {
     intent.data = Uri.parse("tel:112")
     context.startActivity(intent)
 
-    Toast.makeText(context, "🚨 SOS Sent!", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "🚨 SOS Initiated!", Toast.LENGTH_SHORT).show()
 }

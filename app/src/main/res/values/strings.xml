@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TripSathi</string>
-    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_splash">TripSathi</string>
     <string name="title_activity_landing">LandingActivity</string>
     <string name="title_activity_onboarding">OnboardingActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
@@ -15,4 +15,148 @@
     <string name="title_activity_qrresult">QRResultActivity</string>
     <string name="title_activity_safety">SafetyActivity</string>
     <string name="title_activity_contacts">ContactsActivity</string>
+    <string name="title_activity_health">HealthActivity</string>
+    <string name="title_activity_medical_profile">MedicalProfileActivity</string>
+    <string name="title_activity_hospital_map">HospitalMapActivity</string>
+
+    <!-- General -->
+    <string name="hello_user">Hello, %1$s</string>
+    <string name="search_hint">Search</string>
+    <string name="logout">Logout</string>
+    <string name="cancel">Cancel</string>
+    <string name="logout_confirm_msg">Are you sure you want to logout?</string>
+    <string name="no_items_found">No items found</string>
+    <string name="skip">Skip</string>
+    <string name="get_started">Get Started</string>
+    <string name="continue_text">Continue</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+
+    <!-- Language -->
+    <string name="choose_language">Choose Your Language</string>
+    <string name="choose_language_hi">अपनी भाषा चुनें</string>
+    <string name="select_language">Select Language</string>
+    <string name="english">English</string>
+    <string name="hindi">Hindi</string>
+    <string name="telugu">Telugu</string>
+
+    <!-- Onboarding -->
+    <string name="onboard_title_1">Your Smart Travel\nSafety Companion</string>
+    <string name="onboard_desc_1">AI-powered protection for every journey — risk detection, emergency alerts, and live tracking built for every traveler.</string>
+    <string name="onboard_tag_1">AI-POWERED</string>
+
+    <string name="onboard_title_2">Always Know\nWhere You Are</string>
+    <string name="onboard_desc_2">Your position updates in real-time on Google Maps with intelligent geo-fence detection for unfamiliar places.</string>
+    <string name="onboard_tag_2">LIVE GPS</string>
+
+    <string name="onboard_title_3">One Tap Gets\nYou Help Instantly</string>
+    <string name="onboard_desc_3">Triggers alarm, vibration, sends your live location via SMS, and dials emergency contacts without unlocking.</string>
+    <string name="onboard_tag_3">SOS SYSTEM</string>
+
+    <!-- Landing -->
+    <string name="landing_title">TripSathi</string>
+    <string name="landing_tagline">Travel Smart. Stay Safe.</string>
+    <string name="welcome_msg">A Warm Welcome 👋</string>
+    <string name="continue_btn">Continue →</string>
+    <string name="already_have_account_login">Already have an account? Login</string>
+    <string name="feature_1_title">Real-Time GPS Tracking</string>
+    <string name="feature_1_desc">Live location on Google Maps, always updated.</string>
+    <string name="feature_2_title">One-Tap SOS Emergency</string>
+    <string name="feature_2_desc">Alarm + SMS with location + emergency dialer.</string>
+    <string name="feature_3_title">Geo-Fence Protection</string>
+    <string name="feature_3_desc">Auto-alerts when entering high-risk zones.</string>
+
+    <!-- Login -->
+    <string name="welcome_back">Welcome Back</string>
+    <string name="sign_in_desc">Sign in to continue your journey</string>
+    <string name="email_label">EMAIL</string>
+    <string name="email_placeholder">Enter your email</string>
+    <string name="password_label">PASSWORD</string>
+    <string name="password_placeholder">Enter your password</string>
+    <string name="sign_in_btn">Sign In</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="dont_have_account">Don\'t have an account? </string>
+    <string name="sign_up">Sign Up</string>
+
+    <!-- Register -->
+    <string name="create_account">Create Account</string>
+    <string name="join_tripsathi_desc">Join TripSathi — Travel Smart, Stay Safe</string>
+    <string name="your_details">YOUR DETAILS</string>
+    <string name="full_name_label">FULL NAME</string>
+    <string name="full_name_placeholder">e.g. Rahul Sharma</string>
+    <string name="email_address_label">EMAIL ADDRESS</string>
+    <string name="email_address_placeholder">e.g. rahul@gmail.com</string>
+    <string name="password_req_placeholder">Min 8 chars, upper, number, symbol</string>
+    <string name="confirm_password_label">CONFIRM PASSWORD</string>
+    <string name="confirm_password_placeholder">Re-enter your password</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="or_register_with_email">  or register with email  </string>
+    <string name="create_my_account_btn">Create My Account  →</string>
+    <string name="already_have_account">Already have an account? </string>
+    <string name="weak">Weak</string>
+    <string name="fair">Fair</string>
+    <string name="good">Good</string>
+    <string name="strong">Strong ✓</string>
+
+    <!-- Dashboard -->
+    <string name="safety_identity">Safety Identity</string>
+    <string name="active">Active</string>
+    <string name="safety_id_active_desc">Your digital safety ID is active</string>
+    <string name="view_details">View details</string>
+    <string name="recent_activity">Recent activity</string>
+    <string name="my_documents">My documents</string>
+    <string name="services">Services</string>
+    <string name="categories">Categories</string>
+
+    <!-- Grid Items -->
+    <string name="identity">Identity</string>
+    <string name="safety">Safety</string>
+    <string name="health">Health</string>
+    <string name="alerts">Alerts</string>
+    <string name="travel">Travel</string>
+    <string name="transport">Transport</string>
+
+    <!-- Navigation -->
+    <string name="home">Home</string>
+    <string name="map">Map</string>
+    <string name="qr">QR</string>
+
+    <!-- Profile -->
+    <string name="profile">Profile</string>
+    <string name="your_info_card">Your Info Card</string>
+    <string name="explore_section">Explore this section</string>
+    <string name="help_center">Help Center</string>
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="about_developer">About Developer</string>
+    <string name="learn_about_creator">Learn about the creator</string>
+    <string name="check_it_out">Check it Out</string>
+
+    <!-- User Info -->
+    <string name="review_your_info">Review your information</string>
+    <string name="personal">Personal</string>
+    <string name="contact">Contact</string>
+    <string name="emergency_contact">Emergency Contact</string>
+    <string name="safety_details">Safety Details</string>
+    <string name="blood_group">Blood Group</string>
+    <string name="home_address">Home Address</string>
+    <string name="organ_donor">Organ Donor (Yes/No)</string>
+    <string name="confirm_info_correct">I confirm that the above information is correct</string>
+    <string name="back_to_home">Back to Home</string>
+
+    <!-- SOS -->
+    <string name="sos_btn">🚨 SOS</string>
+    <string name="danger_zone">⚠️ Danger Zone!</string>
+    <string name="permission_required">Permission required</string>
+
+    <!-- Health -->
+    <string name="health_center">Health Center</string>
+    <string name="medical_profile">Medical Profile</string>
+    <string name="emergency_info">Emergency Info</string>
+    <string name="nearby_hospitals">Nearby Hospitals</string>
+    <string name="health_desc">Manage your health and medical info</string>
+    <string name="allergies">Allergies</string>
+    <string name="medications">Medications</string>
+    <string name="chronic_conditions">Chronic Conditions</string>
+    <string name="medical_history">Medical History</string>
 </resources>

@@ -26,7 +26,7 @@ fun DeveloperScreen() {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            "Developed by Lakshit Raina\nTripSathi Project 🚀",
+            "Lakshit Raina",
             fontSize = 18.sp
         )
     }

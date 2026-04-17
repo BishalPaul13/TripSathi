@@ -2,7 +2,6 @@ package com.example.tripsathi
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -26,26 +25,23 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.ui.res.stringResource
 
 private val OrangePrimary  = Color(0xFFFF8C42)
 private val OrangeDark     = Color(0xFFFF6B00)
 private val OrangeDeep     = Color(0xFFE84F00)
-private val OrangeLight    = Color(0xFFFFB347)
-private val OrangeTint     = Color(0xFFFFF0E5)
-private val CreamBg        = Color(0xFFFDF6EE)
 private val CardWhite      = Color(0xFFFFFFFF)
-private val TextDark       = Color(0xFF1A1A1A)
 private val TextMuted      = Color(0xFF888888)
-private val DividerColor   = Color(0x14000000)
+private val CreamBg        = Color(0xFFFDF6EE)
+private val black        = Color(0xFF000000)
 
-class LandingActivity : ComponentActivity() {
+class LandingActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -64,8 +60,8 @@ class LandingActivity : ComponentActivity() {
 
 data class FeatureItem(
     val icon: ImageVector,
-    val title: String,
-    val desc: String
+    val titleRes: Int,
+    val descRes: Int
 )
 
 @Composable
@@ -80,15 +76,15 @@ fun PremiumLandingScreen(
 
     val heroGradient = Brush.linearGradient(
         colorStops = arrayOf(
-            0.0f to OrangePrimary,
-            1.0f to OrangeDeep
+            0.0f to CreamBg,
+            1.0f to CreamBg
         )
     )
 
     val features = listOf(
-        FeatureItem(Icons.Default.LocationOn, "Real-Time GPS Tracking", "Live location on Google Maps, always updated."),
-        FeatureItem(Icons.Default.Warning, "One-Tap SOS Emergency", "Alarm + SMS with location + emergency dialer."),
-        FeatureItem(Icons.Default.Shield, "Geo-Fence Protection", "Auto-alerts when entering high-risk zones.")
+        FeatureItem(Icons.Default.LocationOn, R.string.feature_1_title, R.string.feature_1_desc),
+        FeatureItem(Icons.Default.Warning, R.string.feature_2_title, R.string.feature_2_desc),
+        FeatureItem(Icons.Default.Shield, R.string.feature_3_title, R.string.feature_3_desc)
     )
 
     Box(
@@ -118,24 +114,24 @@ fun PremiumLandingScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                         Text(
-                            text = "TripSathi",
+                            text = stringResource(id = R.string.landing_title),
                             fontSize = 38.sp,
                             fontWeight = FontWeight.ExtraBold,
-                            color = CardWhite
+                            color = black
                         )
 
                         Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
-                            text = "Travel Smart. Stay Safe.",
+                            text = stringResource(id = R.string.landing_tagline),
                             fontSize = 14.sp,
-                            color = CardWhite.copy(alpha = 0.82f)
+                            color = black.copy(alpha = 0.82f)
                         )
 
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Image(
-                            painter = painterResource(id = R.drawable.hero_travel),
+                            painter = painterResource(id = R.drawable.tripsathilogo),
                             contentDescription = null,
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
@@ -152,7 +148,7 @@ fun PremiumLandingScreen(
                 ) {
 
                     Text(
-                        "A Warm Welcome 👋",
+                        stringResource(id = R.string.welcome_msg),
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -180,14 +176,14 @@ fun PremiumLandingScreen(
                             .fillMaxWidth()
                             .height(56.dp)
                     ) {
-                        Text("Continue →")
+                        Text(stringResource(id = R.string.continue_btn))
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
                     // ✅ LOGIN BUTTON
                     TextButton(onClick = onLoginClick) {
-                        Text("Already have an account? Login")
+                        Text(stringResource(id = R.string.already_have_account_login))
                     }
                 }
             }
@@ -208,8 +204,8 @@ private fun LandingFeatureRow(feature: FeatureItem) {
         Spacer(modifier = Modifier.width(10.dp))
 
         Column {
-            Text(feature.title, fontWeight = FontWeight.Bold)
-            Text(feature.desc, fontSize = 12.sp, color = TextMuted)
+            Text(stringResource(id = feature.titleRes), fontWeight = FontWeight.Bold)
+            Text(stringResource(id = feature.descRes), fontSize = 12.sp, color = TextMuted)
         }
     }
 }

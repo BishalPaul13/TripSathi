@@ -23,6 +23,55 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TripSathi">
         <activity
+            android:name=".SafeStayMapActivity"
+            android:exported="false"
+            android:label="Safe Stay Map"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".VerifiedGuideScannerActivity"
+            android:exported="false"
+            android:label="Verify Guide"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".MyDocumentsActivity"
+            android:exported="false"
+            android:label="My Documents"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".SafePathChatActivity"
+            android:exported="false"
+            android:label="Safe Path Assistant"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".TravelActivity"
+            android:exported="false"
+            android:label="@string/travel"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".RecentActivityActivity"
+            android:exported="false"
+            android:label="@string/recent_activity"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".LanguageActivity"
+            android:exported="false"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".HospitalMapActivity"
+            android:exported="false"
+            android:label="@string/title_activity_hospital_map"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".MedicalProfileActivity"
+            android:exported="false"
+            android:label="@string/title_activity_medical_profile"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
+            android:name=".HealthActivity"
+            android:exported="false"
+            android:label="@string/title_activity_health"
+            android:theme="@style/Theme.TripSathi" />
+        <activity
             android:name=".ContactsActivity"
             android:exported="false"
             android:label="@string/title_activity_contacts"

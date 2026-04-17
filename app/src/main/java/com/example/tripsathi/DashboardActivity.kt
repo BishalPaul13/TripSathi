@@ -2,7 +2,6 @@ package com.example.tripsathi
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,7 +30,7 @@ private val Orange = Color(0xFFFF6B00)
 private val OrangeLight = Color(0xFFFFEDE5)
 private val Bg = Color(0xFFF7F7F7)
 
-class DashboardActivity : ComponentActivity() {
+class DashboardActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -56,12 +56,12 @@ fun DashboardUI() {
     var showLogoutDialog by remember { mutableStateOf(false) }
 
     val allItems = listOf(
-        Triple("Identity", Icons.Default.Person, "identity"),
-        Triple("Safety", Icons.Default.Shield, "safety"),
-        Triple("Health", Icons.Default.Favorite, "health"),
-        Triple("Alerts", Icons.Default.Warning, "alerts"),
-        Triple("Travel", Icons.Default.Map, "travel"),
-        Triple("Transport", Icons.Default.DirectionsCar, "transport")
+        Triple(stringResource(id = R.string.identity), Icons.Default.Person, "identity"),
+        Triple(stringResource(id = R.string.safety), Icons.Default.Shield, "safety"),
+        Triple(stringResource(id = R.string.health), Icons.Default.Favorite, "health"),
+        Triple(stringResource(id = R.string.alerts), Icons.Default.Warning, "alerts"),
+        Triple(stringResource(id = R.string.travel), Icons.Default.Map, "travel"),
+        Triple(stringResource(id = R.string.transport), Icons.Default.DirectionsCar, "transport")
     )
 
     val filteredItems = allItems.filter {
@@ -85,18 +85,18 @@ fun DashboardUI() {
                         context.startActivity(intent)
                     }
                 ) {
-                    Text("Logout", color = Color.Red)
+                    Text(stringResource(id = R.string.logout), color = Color.Red)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showLogoutDialog = false }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(id = R.string.cancel))
                 }
             },
-            title = { Text("Logout") },
-            text = { Text("Are you sure you want to logout?") }
+            title = { Text(stringResource(id = R.string.logout)) },
+            text = { Text(stringResource(id = R.string.logout_confirm_msg)) }
         )
     }
 
@@ -117,7 +117,7 @@ fun DashboardUI() {
                 HorizontalDivider()
 
                 NavigationDrawerItem(
-                    label = { Text("Logout") },
+                    label = { Text(stringResource(id = R.string.logout)) },
                     selected = false,
                     onClick = {
                         scope.launch {
@@ -158,7 +158,7 @@ fun DashboardUI() {
                 ) {
 
                     Text(
-                        "Hello, $userName",
+                        stringResource(id = R.string.hello_user, userName),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -191,7 +191,7 @@ fun DashboardUI() {
 
                     Box(modifier = Modifier.weight(1f)) {
                         if (searchQuery.isEmpty()) {
-                            Text("Search", color = Color.Gray)
+                            Text(stringResource(id = R.string.search_hint), color = Color.Gray)
                         }
                         BasicTextField(
                             value = searchQuery,
@@ -217,18 +217,18 @@ fun DashboardUI() {
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("Safety Identity", fontWeight = FontWeight.Bold)
-                            Text("Active", color = Orange, fontSize = 12.sp)
+                            Text(stringResource(id = R.string.safety_identity), fontWeight = FontWeight.Bold)
+                            Text(stringResource(id = R.string.active), color = Orange, fontSize = 12.sp)
                         }
 
                         Spacer(modifier = Modifier.height(6.dp))
 
-                        Text("Your digital safety ID is active")
+                        Text(stringResource(id = R.string.safety_id_active_desc))
 
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            "View details",
+                            stringResource(id = R.string.view_details),
                             color = Orange,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.clickable {
@@ -249,8 +249,40 @@ fun DashboardUI() {
 
                 // 🔥 TWO CARDS
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    SmallCard("Recent activity", Icons.Default.History)
-                    SmallCard("My documents", Icons.Default.Folder)
+                    SmallCard(
+                        title = stringResource(id = R.string.recent_activity),
+                        icon = Icons.Default.History,
+                        onClick = {
+                            context.startActivity(Intent(context, RecentActivityActivity::class.java))
+                        }
+                    )
+                    SmallCard(
+                        title = stringResource(id = R.string.my_documents),
+                        icon = Icons.Default.Folder,
+                        onClick = {
+                            context.startActivity(Intent(context, MyDocumentsActivity::class.java))
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // 🔘 EXTRA CARDS (FOR NEW FEATURES)
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    SmallCard(
+                        title = "Verify Guide",
+                        icon = Icons.Default.QrCodeScanner,
+                        onClick = {
+                            context.startActivity(Intent(context, VerifiedGuideScannerActivity::class.java))
+                        }
+                    )
+                    SmallCard(
+                        title = "Safe-Stay Map",
+                        icon = Icons.Default.Map,
+                        onClick = {
+                            context.startActivity(Intent(context, SafeStayMapActivity::class.java))
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -270,7 +302,7 @@ fun DashboardUI() {
                             .padding(10.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Services", color = Orange)
+                        Text(stringResource(id = R.string.services), color = Orange)
                     }
 
                     Box(
@@ -279,7 +311,7 @@ fun DashboardUI() {
                             .padding(10.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Categories")
+                        Text(stringResource(id = R.string.categories))
                     }
                 }
 
@@ -297,21 +329,38 @@ fun DashboardUI() {
                                     title = it.first,
                                     icon = it.second,
                                     onClick = {
-                                        if (it.third == "identity") {
-                                            context.startActivity(
-                                                Intent(context, UserInfoActivity::class.java)
-                                            )
-                                        }
-                                        if (it.third == "safety") {
-                                            context.startActivity(
-                                                Intent(context, SafetyActivity::class.java)
-                                            )
+                                        when (it.third) {
+                                            "identity" -> {
+                                                context.startActivity(
+                                                    Intent(context, UserInfoActivity::class.java)
+                                                )
+                                            }
+                                            "safety" -> {
+                                                context.startActivity(
+                                                    Intent(context, SafetyActivity::class.java)
+                                                )
+                                            }
+                                            "health" -> {
+                                                context.startActivity(
+                                                    Intent(context, HealthActivity::class.java)
+                                                )
+                                            }
+                                            "travel" -> {
+                                                context.startActivity(
+                                                    Intent(context, TravelActivity::class.java)
+                                                )
+                                            }
                                         }
                                     }
                                 )
                             }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
+                    }
+                    if (filteredItems.isEmpty()) {
+                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                            Text(stringResource(id = R.string.no_items_found), color = Color.Gray)
+                        }
                     }
                 }
 
@@ -322,9 +371,15 @@ fun DashboardUI() {
 }
 
 @Composable
-fun RowScope.SmallCard(title: String, icon: androidx.compose.ui.graphics.vector.ImageVector) {
+fun RowScope.SmallCard(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit = {}
+) {
     Card(
-        modifier = Modifier.weight(1f),
+        modifier = Modifier
+            .weight(1f)
+            .clickable { onClick() },
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -370,7 +425,7 @@ fun BottomBar() {
             selected = true,
             onClick = {},
             icon = { Icon(Icons.Default.Home, contentDescription = null) },
-            label = { Text("Home") }
+            label = { Text(stringResource(id = R.string.home)) }
         )
 
         NavigationBarItem(
@@ -379,7 +434,7 @@ fun BottomBar() {
                 context.startActivity(Intent(context, MainActivity::class.java))
             },
             icon = { Icon(Icons.Default.Map, contentDescription = null) },
-            label = { Text("Map") }
+            label = { Text(stringResource(id = R.string.map)) }
         )
 
         NavigationBarItem(
@@ -388,7 +443,7 @@ fun BottomBar() {
                 context.startActivity(Intent(context, QRScannerActivity::class.java))
             },
             icon = { Icon(Icons.Default.QrCode, contentDescription = null) },
-            label = { Text("QR") }
+            label = { Text(stringResource(id = R.string.qr)) }
         )
 
         NavigationBarItem(
@@ -397,7 +452,7 @@ fun BottomBar() {
                 context.startActivity(Intent(context, ProfileActivity::class.java))
             },
             icon = { Icon(Icons.Default.Person, contentDescription = null) },
-            label = { Text("Profile") }
+            label = { Text(stringResource(id = R.string.profile)) }
         )
     }
 }

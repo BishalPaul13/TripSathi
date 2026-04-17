@@ -3,11 +3,10 @@ package com.example.tripsathi
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -52,7 +52,7 @@ private val StrengthFair   = Color(0xFFFFB347)
 private val StrengthGood   = Color(0xFF4CAF50)
 private val StrengthEmpty  = Color(0xFFEEEEEE)
 
-class RegisterActivity : ComponentActivity() {
+class RegisterActivity : BaseActivity() {
 
     private lateinit var authManager: AuthManager
     private val RC_SIGN_IN = 1001
@@ -547,31 +547,45 @@ private fun PasswordStrengthBar(strength: Int) {
 // ─────────────────────────────────────────────────────────────────────────────
 @Composable
 private fun GoogleSignUpButton(onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = onClick,
-        shape = RoundedCornerShape(50),
-        border = ButtonDefaults.outlinedButtonBorder.copy(
-            brush = Brush.horizontalGradient(listOf(OrangeBorder, OrangeBorder))
-        ),
-        colors = ButtonDefaults.outlinedButtonColors(containerColor = CardWhite),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(52.dp)
+            .height(54.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple() // ✅ NEW API (no warning)
+            ) {
+                onClick()
+            },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
-        // Google "G" in brand colors
-        Text(
-            text = "G",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = Color(0xFF4285F4)
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = "Continue with Google",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextDark
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_google_logo),
+                contentDescription = "Google Sign Up",
+                modifier = Modifier.size(22.dp),
+                tint = Color.Unspecified
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = "Continue with Google",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = TextDark
+            )
+        }
     }
 }
