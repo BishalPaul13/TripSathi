@@ -11,9 +11,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -29,7 +32,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.database.FirebaseDatabase
 import com.google.maps.android.compose.*
 
 private val Orange = Color(0xFFFF6B00)
@@ -56,7 +58,7 @@ class SafeStayMapActivity : BaseActivity() {
 @Composable
 fun SafeStayMapScreen(onBack: () -> Unit) {
     val context = LocalContext.current
-    val db = FirebaseDatabase.getInstance().getReference("safe_stays")
+    val db = FirebaseProvider.database.getReference("safe_stays")
     
     var hasLocationPermission by remember {
         mutableStateOf(
@@ -102,10 +104,15 @@ fun SafeStayMapScreen(onBack: () -> Unit) {
         }
 
         Box(modifier = Modifier.weight(1f)) {
+            var mapType by remember { mutableStateOf(MapType.NORMAL) }
+
             GoogleMap(
                 modifier = Modifier.fillMaxSize(),
                 cameraPositionState = cameraPositionState,
-                properties = MapProperties(isMyLocationEnabled = hasLocationPermission)
+                properties = MapProperties(
+                    isMyLocationEnabled = hasLocationPermission,
+                    mapType = mapType
+                )
             ) {
                 stays.forEach { stay ->
                     Marker(
@@ -115,6 +122,23 @@ fun SafeStayMapScreen(onBack: () -> Unit) {
                         icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
                     )
                 }
+            }
+
+            // Satellite Mode Toggle
+            SmallFloatingActionButton(
+                onClick = {
+                    mapType = if (mapType == MapType.NORMAL) MapType.SATELLITE else MapType.NORMAL
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp),
+                containerColor = Color.White,
+                contentColor = Orange
+            ) {
+                Icon(
+                    if (mapType == MapType.NORMAL) Icons.Default.Layers else Icons.Default.Map,
+                    contentDescription = "Toggle Satellite Mode"
+                )
             }
 
             // Floating Rating Card (Overlay)

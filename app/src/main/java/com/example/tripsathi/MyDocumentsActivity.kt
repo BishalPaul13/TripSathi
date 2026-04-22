@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import java.io.File
 import java.io.FileOutputStream
 
@@ -54,7 +53,7 @@ class MyDocumentsActivity : BaseActivity() {
 fun MyDocumentsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val user = FirebaseAuth.getInstance().currentUser
-    val db = FirebaseDatabase.getInstance().getReference("user_docs")
+    val db = FirebaseProvider.database.getReference("user_docs")
 
     var adhaarNumber by remember { mutableStateOf("") }
     var panNumber by remember { mutableStateOf("") }
@@ -72,6 +71,9 @@ fun MyDocumentsScreen(onBack: () -> Unit) {
                     panNumber = data["pan"]?.toString() ?: ""
                 }
                 isLoading = false
+            }.addOnFailureListener { error ->
+                isLoading = false
+                Toast.makeText(context, error.localizedMessage ?: "Failed to load documents", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -148,6 +150,8 @@ fun MyDocumentsScreen(onBack: () -> Unit) {
                         val data = mapOf("adhaar" to adhaarNumber, "pan" to panNumber)
                         db.child(uid).setValue(data).addOnSuccessListener {
                             Toast.makeText(context, "Document numbers saved!", Toast.LENGTH_SHORT).show()
+                        }.addOnFailureListener { error ->
+                            Toast.makeText(context, error.localizedMessage ?: "Failed to save documents", Toast.LENGTH_LONG).show()
                         }
                     }
                 },

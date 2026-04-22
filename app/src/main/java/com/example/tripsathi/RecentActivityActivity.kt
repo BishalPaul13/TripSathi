@@ -1,6 +1,7 @@
 package com.example.tripsathi
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,12 +16,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,8 +41,9 @@ class RecentActivityActivity : BaseActivity() {
 
 @Composable
 fun RecentActivityScreen(onBack: () -> Unit) {
+    val context = LocalContext.current
     val user = FirebaseAuth.getInstance().currentUser
-    val db = FirebaseDatabase.getInstance().getReference("alerts")
+    val db = FirebaseProvider.database.getReference("alerts")
     var alerts by remember { mutableStateOf<List<Map<String, Any>>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -62,6 +64,7 @@ fun RecentActivityScreen(onBack: () -> Unit) {
                 isLoading = false
             }.addOnFailureListener {
                 isLoading = false
+                Toast.makeText(context, it.localizedMessage ?: "Failed to load recent activity", Toast.LENGTH_LONG).show()
             }
         }
     }

@@ -26,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import com.google.firebase.database.FirebaseDatabase
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 
@@ -54,7 +53,7 @@ fun GuideScannerScreen(onBack: () -> Unit) {
             scanResult = result.contents
             isChecking = true
             // Check Firebase
-            FirebaseDatabase.getInstance().getReference("verified_guides")
+            FirebaseProvider.database.getReference("verified_guides")
                 .child(result.contents)
                 .get()
                 .addOnSuccessListener { snapshot ->

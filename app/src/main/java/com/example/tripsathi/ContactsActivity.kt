@@ -1,6 +1,7 @@
 package com.example.tripsathi
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -46,7 +47,7 @@ fun ContactsScreen() {
 
     val context = LocalContext.current
     val user = FirebaseAuth.getInstance().currentUser
-    val db = FirebaseDatabase.getInstance().reference
+    val db = FirebaseProvider.database.reference
 
     var contacts by remember { mutableStateOf(listOf<Contact>()) }
 
@@ -69,7 +70,9 @@ fun ContactsScreen() {
                         contacts = list
                     }
 
-                    override fun onCancelled(error: DatabaseError) {}
+                    override fun onCancelled(error: DatabaseError) {
+                        Toast.makeText(context, error.message, Toast.LENGTH_LONG).show()
+                    }
                 })
         }
     }
@@ -139,10 +142,15 @@ fun ContactsScreen() {
                                     .child("contacts")
                                     .child(contactId)
                                     .setValue(contact)
+                                    .addOnSuccessListener {
+                                        name = ""
+                                        phone = ""
+                                        Toast.makeText(context, "Contact saved", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(context, error.localizedMessage ?: "Failed to save contact", Toast.LENGTH_LONG).show()
+                                    }
                             }
-
-                            name = ""
-                            phone = ""
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -196,6 +204,9 @@ fun ContactsScreen() {
                                         .child("contacts")
                                         .child(contact.id)
                                         .removeValue()
+                                        .addOnFailureListener { error ->
+                                            Toast.makeText(context, error.localizedMessage ?: "Failed to delete contact", Toast.LENGTH_LONG).show()
+                                        }
                                 }
                             }
                         )

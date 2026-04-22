@@ -5,15 +5,42 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Bloodtype
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Medication
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +52,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 private val Orange = Color(0xFFFF6B00)
 private val Bg = Color(0xFFF7F7F7)
@@ -42,7 +68,7 @@ fun MedicalProfileScreen() {
     val context = LocalContext.current
     val activity = context as ComponentActivity
     val user = FirebaseAuth.getInstance().currentUser
-    val db = FirebaseDatabase.getInstance().getReference("health")
+    val db = FirebaseProvider.database.getReference("health")
 
     var blood by remember { mutableStateOf("") }
     var allergy by remember { mutableStateOf("") }
@@ -53,19 +79,24 @@ fun MedicalProfileScreen() {
 
     LaunchedEffect(user?.uid) {
         user?.uid?.let { uid ->
-            db.child(uid).get().addOnSuccessListener { snapshot ->
-                val data = snapshot.value as? Map<String, Any>
-                if (data != null) {
-                    blood = data["blood"]?.toString() ?: ""
-                    allergy = data["allergy"]?.toString() ?: ""
-                    condition = data["condition"]?.toString() ?: ""
-                    meds = data["meds"]?.toString() ?: ""
-                    donor = data["donor"]?.toString() ?: ""
+            db.child(uid).get()
+                .addOnSuccessListener { snapshot ->
+                    val data = snapshot.value as? Map<String, Any>
+                    if (data != null) {
+                        blood = data["blood"]?.toString().orEmpty()
+                        allergy = data["allergy"]?.toString().orEmpty()
+                        condition = data["condition"]?.toString().orEmpty()
+                        meds = data["meds"]?.toString().orEmpty()
+                        donor = data["donor"]?.toString().orEmpty()
+                    }
+                    isLoading = false
                 }
-                isLoading = false
-            }.addOnFailureListener {
-                isLoading = false
-            }
+                .addOnFailureListener { error ->
+                    isLoading = false
+                    Toast.makeText(context, error.localizedMessage ?: "Failed to load medical profile", Toast.LENGTH_LONG).show()
+                }
+        } ?: run {
+            isLoading = false
         }
     }
 
@@ -76,7 +107,6 @@ fun MedicalProfileScreen() {
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // 🔙 HEADER
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -150,11 +180,15 @@ fun MedicalProfileScreen() {
                                 "meds" to meds,
                                 "donor" to donor
                             )
-                            user?.uid?.let {
-                                db.child(it).setValue(data).addOnSuccessListener {
-                                    Toast.makeText(context, "Medical Profile Updated ✅", Toast.LENGTH_SHORT).show()
-                                }
-                            }
+                            user?.uid?.let { uid ->
+                                db.child(uid).setValue(data)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(context, "Medical profile updated", Toast.LENGTH_SHORT).show()
+                                    }
+                                    .addOnFailureListener { error ->
+                                        Toast.makeText(context, error.localizedMessage ?: "Failed to save medical profile", Toast.LENGTH_LONG).show()
+                                    }
+                            } ?: Toast.makeText(context, "Please log in again", Toast.LENGTH_LONG).show()
                         },
                         modifier = Modifier
                             .fillMaxWidth()

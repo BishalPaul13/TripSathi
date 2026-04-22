@@ -36,7 +36,6 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 private val Orange = Color(0xFFFF6B00)
 private val Bg = Color(0xFFF7F7F7)
@@ -56,7 +55,7 @@ fun SafetyScreen() {
     val context = LocalContext.current
     val activity = context as ComponentActivity
     val user = FirebaseAuth.getInstance().currentUser
-    val db = FirebaseDatabase.getInstance().getReference("users")
+    val db = FirebaseProvider.database.getReference("users")
 
     var emergencyContact by remember { mutableStateOf("Not Set") }
     var userLocation by remember { mutableStateOf<Location?>(null) }
@@ -86,6 +85,8 @@ fun SafetyScreen() {
         user?.uid?.let { uid ->
             db.child(uid).child("contact").get().addOnSuccessListener { snapshot ->
                 emergencyContact = snapshot.value?.toString() ?: "Not Set"
+            }.addOnFailureListener { error ->
+                Toast.makeText(context, error.localizedMessage ?: "Failed to load emergency contact", Toast.LENGTH_LONG).show()
             }
         }
     }

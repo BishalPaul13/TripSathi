@@ -3,6 +3,7 @@ package com.example.tripsathi
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -23,7 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 
@@ -41,7 +41,7 @@ class QRActivity : ComponentActivity() {
 fun QRScreen() {
     val context = LocalContext.current
     val user = FirebaseAuth.getInstance().currentUser
-    val db = FirebaseDatabase.getInstance().getReference("users")
+    val db = FirebaseProvider.database.getReference("users")
 
     var data by remember { mutableStateOf<Map<String, Any>?>(null) }
 
@@ -49,6 +49,8 @@ fun QRScreen() {
         user?.uid?.let {
             db.child(it).get().addOnSuccessListener {
                 data = it.value as? Map<String, Any>
+            }.addOnFailureListener { error ->
+                Toast.makeText(context, error.localizedMessage ?: "Failed to load QR data", Toast.LENGTH_LONG).show()
             }
         }
     }

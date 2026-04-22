@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.tripsathi" />
-                  <option name="mobileSdkAppId" value="1:419550298572:android:a885606b6457ce33941d69" />
-                  <option name="projectId" value="tripsathi-3a7bb" />
-                  <option name="projectNumber" value="419550298572" />
+                  <option name="mobileSdkAppId" value="1:128585187809:android:38eaee7ba081b45de212a0" />
+                  <option name="projectId" value="tripsathi-96cb8" />
+                  <option name="projectNumber" value="128585187809" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

@@ -1,10 +1,12 @@
 package com.example.tripsathi
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.filled.Layers
+import androidx.compose.material.icons.filled.Map
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -58,6 +66,46 @@ fun SafePathChatScreen(onBack: () -> Unit) {
     
     var currentStep by remember { mutableStateOf(0) }
     var showOptions by remember { mutableStateOf(true) }
+    var showPath by remember { mutableStateOf(false) }
+    var userLocation by remember { mutableStateOf<LatLng?>(null) }
+    var mapType by remember { mutableStateOf(MapType.NORMAL) }
+
+    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(20.5937, 78.9629), 5f)
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            try {
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    location?.let {
+                        val pos = LatLng(it.latitude, it.longitude)
+                        userLocation = pos
+                        cameraPositionState.position = CameraPosition.fromLatLngZoom(pos, 15f)
+                    }
+                }
+            } catch (e: SecurityException) { }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    // Demo Path Data (Calculated relative to user's real location)
+    val safePath = remember(userLocation) {
+        userLocation?.let { loc ->
+            listOf(
+                loc,
+                LatLng(loc.latitude + 0.002, loc.longitude + 0.001),
+                LatLng(loc.latitude + 0.004, loc.longitude + 0.003),
+                LatLng(loc.latitude + 0.006, loc.longitude + 0.002)
+            )
+        } ?: emptyList()
+    }
 
     val options = listOf(
         listOf("Find a safe route", "I feel unsafe here"),
@@ -84,6 +132,49 @@ fun SafePathChatScreen(onBack: () -> Unit) {
             },
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
         )
+
+        // Map Section (Shows when path is requested)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(if (showPath) 250.dp else 0.dp)
+        ) {
+            if (showPath && userLocation != null) {
+                GoogleMap(
+                    modifier = Modifier.fillMaxSize(),
+                    cameraPositionState = cameraPositionState,
+                    properties = MapProperties(
+                        isMyLocationEnabled = true,
+                        mapType = mapType
+                    )
+                ) {
+                    Polyline(
+                        points = safePath,
+                        color = Color(0xFF4CAF50),
+                        width = 12f
+                    )
+                    Marker(state = MarkerState(position = safePath.first()), title = "Your Location")
+                    Marker(state = MarkerState(position = safePath.last()), title = "Safe Destination")
+                }
+
+                // Satellite Mode Toggle
+                SmallFloatingActionButton(
+                    onClick = {
+                        mapType = if (mapType == MapType.NORMAL) MapType.SATELLITE else MapType.NORMAL
+                    },
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp),
+                    containerColor = Color.White,
+                    contentColor = Orange
+                ) {
+                    Icon(
+                        if (mapType == MapType.NORMAL) Icons.Default.Layers else Icons.Default.Map,
+                        contentDescription = "Toggle Satellite Mode"
+                    )
+                }
+            }
+        }
 
         // Chat Area
         LazyColumn(
@@ -116,6 +207,9 @@ fun SafePathChatScreen(onBack: () -> Unit) {
                                 delay(1000)
                                 handleBotResponse(option) { botMsg ->
                                     messages = messages + ChatMessage(botMsg, false)
+                                    if (option.contains("Yes") || option.contains("route")) {
+                                        showPath = true
+                                    }
                                     currentStep++
                                     showOptions = true
                                 }

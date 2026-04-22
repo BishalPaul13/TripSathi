@@ -2,7 +2,10 @@ package com.example.tripsathi
 
 import android.app.Activity
 import android.content.Intent
-import com.google.android.gms.auth.api.signin.*
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
@@ -14,35 +17,42 @@ class AuthManager(private val activity: Activity) {
 
     init {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("419550298572-gkasrhq11ii3f7rovo9cvce74rbla2vd.apps.googleusercontent.com") // 🔥 replace
+            .requestIdToken(activity.getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(activity, gso)
     }
 
-    fun getSignInIntent(): Intent {
-        return googleSignInClient.signInIntent
-    }
+    fun getSignInIntent(): Intent = googleSignInClient.signInIntent
 
     fun handleResult(
         data: Intent?,
         onSuccess: () -> Unit,
         onFailure: (String) -> Unit
     ) {
-        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
         try {
-            val account = task.result
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            val account = GoogleSignIn.getSignedInAccountFromIntent(data)
+                .getResult(ApiException::class.java)
+            val idToken = account.idToken
+
+            if (idToken.isNullOrBlank()) {
+                onFailure("Google sign-in did not return an ID token.")
+                return
+            }
+
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
 
             auth.signInWithCredential(credential)
-                .addOnCompleteListener(activity) {
-                    if (it.isSuccessful) onSuccess()
-                    else onFailure("Auth Failed")
+                .addOnCompleteListener(activity) { task ->
+                    if (task.isSuccessful) {
+                        onSuccess()
+                    } else {
+                        onFailure(task.exception?.localizedMessage ?: "Firebase auth failed")
+                    }
                 }
-
         } catch (e: Exception) {
-            onFailure(e.message ?: "Error")
+            onFailure(e.localizedMessage ?: "Google sign-in failed")
         }
     }
 

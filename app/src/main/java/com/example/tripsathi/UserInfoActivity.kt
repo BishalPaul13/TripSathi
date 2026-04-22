@@ -2,18 +2,42 @@ package com.example.tripsathi
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 
 private val Orange = Color(0xFFFF6B00)
 private val Bg = Color(0xFFF7F7F7)
@@ -36,33 +59,33 @@ class UserInfoActivity : ComponentActivity() {
 
 @Composable
 fun UserInfoScreen() {
-
     val context = LocalContext.current
     val user = FirebaseAuth.getInstance().currentUser
-    val db = FirebaseDatabase.getInstance().getReference("users")
+    val db = FirebaseProvider.database.getReference("users")
 
     var blood by remember { mutableStateOf("") }
     var contact by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }
     var donor by remember { mutableStateOf("") }
-
     var isChecked by remember { mutableStateOf(false) }
     var isEditable by remember { mutableStateOf(true) }
 
-    // ✅ PREFILL DATA
-    LaunchedEffect(Unit) {
-        user?.uid?.let {
-            db.child(it).get().addOnSuccessListener { snap ->
-                val data = snap.value as? Map<String, Any>
-                data?.let {
-                    blood = it["blood"]?.toString() ?: ""
-                    contact = it["contact"]?.toString() ?: ""
-                    address = it["address"]?.toString() ?: ""
-                    donor = it["donor"]?.toString() ?: ""
-
-                    isEditable = false // 🔒 LOCK
+    LaunchedEffect(user?.uid) {
+        user?.uid?.let { uid ->
+            db.child(uid).get()
+                .addOnSuccessListener { snapshot ->
+                    val data = snapshot.value as? Map<String, Any>
+                    data?.let {
+                        blood = it["blood"]?.toString().orEmpty()
+                        contact = it["contact"]?.toString().orEmpty()
+                        address = it["address"]?.toString().orEmpty()
+                        donor = it["donor"]?.toString().orEmpty()
+                        isEditable = false
+                    }
                 }
-            }
+                .addOnFailureListener { error ->
+                    Toast.makeText(context, error.localizedMessage ?: "Failed to load profile", Toast.LENGTH_LONG).show()
+                }
         }
     }
 
@@ -73,7 +96,6 @@ fun UserInfoScreen() {
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { (context as? ComponentActivity)?.finish() }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -84,7 +106,6 @@ fun UserInfoScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔥 PERSONAL
         InfoCard("Personal", onEditClick = { isEditable = true }) {
             Text("Name: ${user?.displayName ?: "N/A"}")
             Text("Email: ${user?.email ?: "N/A"}")
@@ -92,7 +113,6 @@ fun UserInfoScreen() {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔥 CONTACT
         InfoCard("Contact", onEditClick = { isEditable = true }) {
             OutlinedTextField(
                 value = contact,
@@ -105,9 +125,7 @@ fun UserInfoScreen() {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔥 SAFETY
         InfoCard("Safety Details", onEditClick = { isEditable = true }) {
-
             OutlinedTextField(
                 value = blood,
                 onValueChange = { blood = it },
@@ -153,7 +171,6 @@ fun UserInfoScreen() {
 
         Button(
             onClick = {
-
                 val data = mapOf(
                     "name" to user?.displayName,
                     "email" to user?.email,
@@ -163,12 +180,15 @@ fun UserInfoScreen() {
                     "donor" to donor
                 )
 
-                user?.uid?.let {
-                    db.child(it).setValue(data)
-                }
-
-                context.startActivity(Intent(context, VerifiedActivity::class.java))
-
+                user?.uid?.let { uid ->
+                    db.child(uid).setValue(data)
+                        .addOnSuccessListener {
+                            context.startActivity(Intent(context, VerifiedActivity::class.java))
+                        }
+                        .addOnFailureListener { error ->
+                            Toast.makeText(context, error.localizedMessage ?: "Failed to save information", Toast.LENGTH_LONG).show()
+                        }
+                } ?: Toast.makeText(context, "Please log in again", Toast.LENGTH_LONG).show()
             },
             enabled = isChecked,
             modifier = Modifier
@@ -182,21 +202,18 @@ fun UserInfoScreen() {
     }
 }
 
-// ✅ FIXED CARD
 @Composable
 fun InfoCard(
     title: String,
     onEditClick: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-
     Card(
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -207,13 +224,12 @@ fun InfoCard(
                         "Edit",
                         color = Orange,
                         fontSize = 12.sp,
-                        modifier = Modifier.clickable { onEditClick() } // ✅ FIX
+                        modifier = Modifier.clickable { onEditClick() }
                     )
                 }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-
             content()
         }
     }
