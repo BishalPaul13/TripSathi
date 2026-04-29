@@ -179,8 +179,8 @@ fun LocationScreen(fusedLocationClient: FusedLocationProviderClient) {
                         val radius = (child.child("radius").value as? Number)?.toDouble() ?: 200.0
                         val isApproved = child.child("approved").getValue(Boolean::class.java) ?: true
                         
-                        // Backward compatibility: older zones without an "approved" field stay visible.
-                        if (lat != 0.0 && isApproved) {
+                        // Show all zones: unapproved as yellow, approved as red.
+                        if (lat != 0.0) {
                             zones.add(DangerZone(child.key ?: "", lat, lng, radius, isApproved))
                         }
                     } catch (e: Exception) {
@@ -237,7 +237,7 @@ fun LocationScreen(fusedLocationClient: FusedLocationProviderClient) {
                             android.util.Log.d("TripSathi", "Distance to zone ${zone.id}: ${distance.toInt()}m")
                         }
 
-                        if (distance < zone.radius) {
+                        if (distance < zone.radius && zone.isApproved) {
                             inAnyZone = true
                             if (!hasSentAlertState.value) {
                                 // Double check if we are still in the zone before firing
@@ -335,43 +335,47 @@ fun LocationScreen(fusedLocationClient: FusedLocationProviderClient) {
         ) {
             Marker(state = MarkerState(position = userLocation))
             
-            // 🟠 PREVIEW: Show the area being marked BEFORE saving
+            // 🟡 PREVIEW: Show the area being marked BEFORE saving
             if (showConfirmDialog && pendingLatLng != null) {
                 Circle(
                     center = pendingLatLng!!,
                     radius = 200.0,
-                    fillColor = Color(0x66FF0000), // Stronger red preview
-                    strokeColor = Color.Red,
+                    fillColor = Color(0x66FFFF00), // Yellow preview
+                    strokeColor = Color.Yellow,
                     strokeWidth = 25f,
                     zIndex = 100f
                 )
                 Marker(
                     state = MarkerState(position = pendingLatLng!!),
-                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW),
                     alpha = 0.8f,
                     zIndex = 101f
                 )
             }
             
-            // 🔴 Visual Circles and Markers for approved danger zones
+            // 🟡/🔴 Visual Circles and Markers for danger zones
             dangerZones.forEach { zone ->
                 key(zone.id) {
                     val zonePos = LatLng(zone.lat, zone.lng)
+                    val color = if (zone.isApproved) Color.Red else Color.Yellow
+                    val fillColor = if (zone.isApproved) Color(0x55FF0000) else Color(0x55FFFF00)
+                    val markerHue = if (zone.isApproved) BitmapDescriptorFactory.HUE_RED else BitmapDescriptorFactory.HUE_YELLOW
+                    val title = if (zone.isApproved) "⚠️ DANGER ZONE" else "⚠️ POTENTIAL DANGER"
                     
                     Circle(
                         center = zonePos,
                         radius = zone.radius,
-                        fillColor = Color(0x55FF0000), // Semi-transparent red
-                        strokeColor = Color.Red,
-                        strokeWidth = 25f, // Extremely thick for visibility
+                        fillColor = fillColor,
+                        strokeColor = color,
+                        strokeWidth = 25f,
                         zIndex = 10f
                     )
 
                     Marker(
                         state = rememberMarkerState(position = zonePos),
-                        title = "⚠️ DANGER ZONE",
-                        snippet = "Stay alert! Radius: ${zone.radius.toInt()}m",
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED),
+                        title = title,
+                        snippet = "Radius: ${zone.radius.toInt()}m${if (!zone.isApproved) " (Pending Approval)" else ""}",
+                        icon = BitmapDescriptorFactory.defaultMarker(markerHue),
                         zIndex = 11f
                     )
                 }
@@ -427,9 +431,9 @@ fun LocationScreen(fusedLocationClient: FusedLocationProviderClient) {
     }
 }
 
-// 📏 Distance function
+// 📏 Distance function (Haversine formula)
 fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
-    val R = 6371000.0
+    val R = 6371000.0                               //Earth radius(in m)
     val dLat = Math.toRadians(lat2 - lat1)
     val dLon = Math.toRadians(lon2 - lon1)
 
